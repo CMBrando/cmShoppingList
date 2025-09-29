@@ -33,7 +33,7 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "Homepage = "https://github.com/CMBrando/cmShoppingList"
+Homepage = "https://github.com/CMBrando/cmShoppingList"
 
 
 [tool.flit.module]
