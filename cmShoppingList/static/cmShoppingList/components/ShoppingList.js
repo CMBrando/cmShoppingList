@@ -144,7 +144,7 @@ export default {
                         $that.coveredList.push({
                             id: request.id,
                             name: request.name,
-                            multiplier: quantityUsed
+                            quantity: quantityUsed
                         });
 
                         asset.quantity -= quantityUsed;
@@ -165,7 +165,7 @@ export default {
                         $that.coveredList.push({
                             id: request.id,
                             name: displayName,
-                            multiplier: quantityUsed
+                            quantity: quantityUsed
                         });
 
                         asset.quantity -= quantityUsed;
@@ -175,7 +175,7 @@ export default {
 
                 // Build result text from covered items
                 _.each(this.coveredList, function(item) {
-                    strBld += item.name + ' x' + item.multiplier + '\n';
+                    strBld += item.name + ' x' + item.quantity + '\n';
                 });
 
                 this.resultText = strBld;
