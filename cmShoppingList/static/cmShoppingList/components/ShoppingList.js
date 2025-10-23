@@ -11,12 +11,14 @@ export default {
             fitMultiplier: 1,
             resultText: '',
             resultTypes: [],
-            estimatedPrice: 0
+            estimatedPrice: 0,
+            equivalentItems: []
         };
     },
     props: ['string'],
     created: function () {
         this.loadTypes();
+        this.loadEquivalentItems();
     },
     mounted: function () {
     },
@@ -47,6 +49,36 @@ export default {
                 $that.marketTypes = data;
             });
         },
+        loadEquivalentItems: function () {
+            var $that = this;
+            $.getJSON('/static/cmShoppingList/components/equivalent_items.json', null, function (data) {
+                $that.equivalentItems = data;
+            });
+        },
+        findEquivalentItem: function (fitItemName, assetArr) {
+            // Find the equivalence group containing the fit item
+            var equivalenceGroup = _.find(this.equivalentItems, function (group) {
+                return _.includes(group, fitItemName);
+            });
+
+            if (!equivalenceGroup) {
+                return null;
+            }
+
+            // Search for any equivalent item with available quantity in the asset list
+            for (var i = 0; i < equivalenceGroup.length; i++) {
+                var equivalentName = equivalenceGroup[i];
+                var asset = _.find(assetArr, function (ass) {
+                    return ass.name === equivalentName && ass.quantity > 0;
+                });
+
+                if (asset) {
+                    return asset;
+                }
+            }
+
+            return null;
+        },
         // calculateTotalPrice: function () {
         //     var $that = this;
         //     var ids = _.map(this.resultTypes, function (t) { return t.id; }).join(',');
@@ -64,15 +96,11 @@ export default {
         //     });
         // },
         onAssetInput: function (evt) {
-
             this.assetArr = parseFitText(this.assetText, this.marketTypes, true);
-
             this.calculateList();
         },
         onFitInput: function (evt) {
-
             this.fitArr = parseFitText(this.fitText, this.marketTypes, true);
-
             this.calculateList();
         },
         calculateList: function () {
@@ -84,27 +112,70 @@ export default {
 
                 var $that = this;
 
-                _.each(this.fitArr, function (fit) {
+                // Create working copy of inventory
+                var inventory = _.map(this.assetArr, function(asset) {
+                    return {
+                        id: asset.id,
+                        name: asset.name,
+                        quantity: asset.multiplier
+                    };
+                });
 
-                    var itemTotal = (fit.multiplier * $that.fitMultiplier);
+                // Track what's still needed for each requested item
+                var requestedItems = _.map(this.fitArr, function(fit) {
+                    return {
+                        id: fit.id,
+                        name: fit.name,
+                        stillNeeded: fit.multiplier * $that.fitMultiplier
+                    };
+                });
 
-                    var asset = _.find($that.assetArr, function (ass) { return ass.id == fit.id; });
-                    if (asset == null) {
-                        strBld += fit.name + ' x' + itemTotal + '\n';
-                        $that.resultTypes.push({ id: fit.id, multiplier: itemTotal });
+                // PASS 1: Handle exact matches first
+                _.each(requestedItems, function(request) {
+                    if (request.stillNeeded <= 0) return;
+
+                    var asset = _.find(inventory, function (item) {
+                        return item.id == request.id;
+                    });
+
+                    if (asset) {
+                        var quantityUsed = Math.min(request.stillNeeded, asset.quantity);
+
+                        $that.coveredList.push({
+                            id: request.id,
+                            name: request.name,
+                            multiplier: quantityUsed
+                        });
+
+                        asset.quantity -= quantityUsed;
+                        request.stillNeeded -= quantityUsed;
                     }
-                    else {
-                        // if fit amount is greater than asset add diff
-                        if (itemTotal > asset.multiplier) {
-                            strBld += fit.name + ' x' + (itemTotal - asset.multiplier) + '\n';
-                            $that.resultTypes.push({ id: fit.id, multiplier: (itemTotal - asset.multiplier) });
-                            $that.coveredList.push({ id: fit.id, name: fit.name, multiplier: asset.multiplier });
-                        }
-                        else {
-                            $that.coveredList.push({ id: fit.id, name: fit.name, multiplier: itemTotal });
-                        }
-                    }
+                });
 
+                // PASS 2: Handle equivalent items for remaining needs
+                _.each(requestedItems, function(request) {
+                    while (request.stillNeeded > 0) {
+                        var asset = $that.findEquivalentItem(request.name, inventory);
+
+                        if (!asset) break;
+
+                        var displayName = asset.name + ' (subs ' + request.name + ')';
+                        var quantityUsed = Math.min(request.stillNeeded, asset.quantity);
+
+                        $that.coveredList.push({
+                            id: request.id,
+                            name: displayName,
+                            multiplier: quantityUsed
+                        });
+
+                        asset.quantity -= quantityUsed;
+                        request.stillNeeded -= quantityUsed;
+                    }
+                });
+
+                // Build result text from covered items
+                _.each(this.coveredList, function(item) {
+                    strBld += item.name + ' x' + item.multiplier + '\n';
                 });
 
                 this.resultText = strBld;
@@ -121,8 +192,3 @@ export default {
         },
     }
 }
-
-
-
-
-
