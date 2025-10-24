@@ -30,6 +30,12 @@ Next initalize all the market types
 python manage.py populate_types
 ```
 
+Next initalize the item equivalences
+
+```bash
+python manage.py populate_equivalents
+```
+
 Next copy all the static data to the output folder
 
 ```bash
