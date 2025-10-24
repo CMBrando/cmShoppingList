@@ -51,25 +51,24 @@ export default {
         },
         loadEquivalentItems: function () {
             var $that = this;
-            $.getJSON('/static/cmShoppingList/components/equivalent_items.json', null, function (data) {
+            $.getJSON('GetItemEquivalences', null, function (data) {
                 $that.equivalentItems = data;
             });
         },
-        findEquivalentItem: function (fitItemName, assetArr) {
-            // Find the equivalence group containing the fit item
-            var equivalenceGroup = _.find(this.equivalentItems, function (group) {
-                return _.includes(group, fitItemName);
-            });
-
-            if (!equivalenceGroup) {
+        findEquivalentItem: function (fitItemId, assetArr) {
+            // Check if this item has any equivalents
+            if (!this.equivalentItems[fitItemId]) {
                 return null;
             }
 
+            // Get the list of equivalent item IDs
+            var equivalentIds = this.equivalentItems[fitItemId];
+
             // Search for any equivalent item with available quantity in the asset list
-            for (var i = 0; i < equivalenceGroup.length; i++) {
-                var equivalentName = equivalenceGroup[i];
+            for (var i = 0; i < equivalentIds.length; i++) {
+                var equivalentId = equivalentIds[i];
                 var asset = _.find(assetArr, function (ass) {
-                    return ass.name === equivalentName && ass.quantity > 0;
+                    return ass.id === equivalentId && ass.quantity > 0;
                 });
 
                 if (asset) {
@@ -155,7 +154,7 @@ export default {
                 // PASS 2: Handle equivalent items for remaining needs
                 _.each(requestedItems, function(request) {
                     while (request.stillNeeded > 0) {
-                        var asset = $that.findEquivalentItem(request.name, inventory);
+                        var asset = $that.findEquivalentItem(request.id, inventory);
 
                         if (!asset) break;
 

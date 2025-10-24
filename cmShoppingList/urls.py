@@ -8,5 +8,6 @@ app_name = "example"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("GetMarketTypes", views.get_market_types)
+    path("GetMarketTypes", views.get_market_types),
+    path("GetItemEquivalences", views.get_item_equivalences)
 ]

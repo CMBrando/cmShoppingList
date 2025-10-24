@@ -22,4 +22,21 @@ class MarketType(models.Model):
         default_permissions = ()
 
 
-        
+class ItemEquivalence(models.Model):
+    """Maps original items to their equivalent items."""
+    original_item = models.ForeignKey(
+        MarketType,
+        on_delete=models.CASCADE,
+        related_name='equivalent_items'
+    )
+    equivalent_item = models.ForeignKey(
+        MarketType,
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    class Meta:
+        default_permissions = ()
+        unique_together = ('original_item', 'equivalent_item')
+
+
