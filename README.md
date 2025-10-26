@@ -24,16 +24,10 @@ Next perform migrations to add models to the database:
 python manage.py migrate
 ```
 
-Next initalize all the market types
+Next initalize all the market types and equivalences
 
 ```bash
 python manage.py populate_types
-```
-
-Next initalize the item equivalences
-
-```bash
-python manage.py populate_equivalents
 ```
 
 Next copy all the static data to the output folder
