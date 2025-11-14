@@ -115,6 +115,17 @@ function parseFitText(text, marketLookup, includeHull) {
                     num = parseInt(res[0].replace(' ', '')); // this is to get the multiplier
                 }
             }
+
+            // check for eft line
+            if (res == null || res.length == 0) {
+                var regex = / x\d+$/;
+                res = name.match(regex);
+
+                if (res != null && res.length == 1) { // check if has multiplier, otherwise just use name
+                    name = name.replace(res[0], '');
+                    num = parseInt(res[0].replace('x', '').replace(' ', '')); // this is to get the multiplier
+                }
+            }
         }
 
         if (marketLookup instanceof Array) {
