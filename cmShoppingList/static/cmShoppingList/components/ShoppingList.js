@@ -8,10 +8,9 @@ export default {
             fitArr: [],
             marketTypes: [],
             coveredList: [],
+            neededList: [],
+            substitutionNotes: [],
             fitMultiplier: 1,
-            resultText: '',
-            resultTypes: [],
-            estimatedPrice: 0,
             equivalentItems: []
         };
     },
@@ -29,16 +28,6 @@ export default {
                 this.fitMultiplier = 1;
 
             this.calculateList();
-        },
-        resultText: function () {
-            if (this.resultText == '') {
-                this.resultTypes = [];
-                this.coveredList = [];
-                this.estimatedPrice = 0;
-            }
-
-            // if(this.resultText !== '')
-            //     this.calculateTotalPrice();
         }
     },
     methods: {
@@ -105,9 +94,9 @@ export default {
         calculateList: function () {
             if (this.assetArr.length !== 0 && this.fitArr.length !== 0) {
 
-                var strBld = '';
                 this.coveredList = [];
-                this.resultTypes = [];
+                this.neededList = [];
+                this.substitutionNotes = [];
 
                 var $that = this;
 
@@ -158,12 +147,16 @@ export default {
 
                         if (!asset) break;
 
-                        var displayName = asset.name + ' (subs ' + request.name + ')';
                         var quantityUsed = Math.min(request.stillNeeded, asset.quantity);
 
                         $that.coveredList.push({
                             id: request.id,
-                            name: displayName,
+                            name: asset.name,
+                            quantity: quantityUsed
+                        });
+
+                        $that.substitutionNotes.push({
+                            note: request.name + ' -> ' + asset.name,
                             quantity: quantityUsed
                         });
 
@@ -172,22 +165,60 @@ export default {
                     }
                 });
 
-                // Build result text from covered items
-                _.each(this.coveredList, function(item) {
-                    strBld += item.name + ' x' + item.quantity + '\n';
+                // PASS 3: Collect items still needed
+                _.each(requestedItems, function(request) {
+                    if (request.stillNeeded > 0) {
+                        $that.neededList.push({
+                            id: request.id,
+                            name: request.name,
+                            quantity: request.stillNeeded
+                        });
+                    }
                 });
-
-                this.resultText = strBld;
-
-                if (this.resultText == '')
-                    this.resultText = '(No Items Needed)';
-            }
-            else {
-                this.resultText = '';
             }
         },
         addCommas: function (num) {
             return numeral(num).format('0,0');
         },
+        copyToClipboard: function (text) {
+            navigator.clipboard.writeText(text);
+        },
+    },
+    computed: {
+        groupedSubstitutionNotes: function() {
+            var grouped = {};
+
+            _.each(this.substitutionNotes, function(item) {
+                if (!grouped[item.note]) {
+                    grouped[item.note] = 0;
+                }
+                grouped[item.note] += item.quantity;
+            });
+
+            return _.map(grouped, function(quantity, note) {
+                return quantity > 1 ? note + ' x' + quantity : note;
+            });
+        },
+        coveredListText: function() {
+            if (this.coveredList.length === 0) {
+                return 'No items covered yet';
+            }
+            return _.map(this.coveredList, function(item) {
+                return item.name + ' x' + item.quantity;
+            }).join('\n');
+        },
+        neededListText: function() {
+            if (this.neededList.length === 0) {
+                return 'No items needed';
+            }
+            return _.map(this.neededList, function(item) {
+                return item.name + ' x' + item.quantity;
+            }).join('\n');
+        },
+        formattedSubstitutionNotes: function() {
+            return _.map(this.groupedSubstitutionNotes, function(note) {
+                return note.replace(' -> ', ' <b>-></b> ');
+            });
+        }
     }
 }
