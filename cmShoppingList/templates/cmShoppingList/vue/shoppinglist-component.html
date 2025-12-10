@@ -28,17 +28,30 @@
             </div>
         </div>
         <div style="display:table-cell; width: 30%; padding-left: 10px">
-            <div>
-                <h3 style="display: inline-block">List / Result</h3>
-                <span v-if="estimatedPrice > 0" style="display: inline-block; margin-left: 10px">Estimated Cost: [[ addCommas(estimatedPrice) ]]</span>
+            <div style="margin-bottom: 20px">
+                <div>
+                    <h3 style="display: inline-block">Items You Have</h3>
+                    <button v-if="coveredList.length > 0" @click="copyToClipboard(coveredListText)" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 5px" title="Copy to clipboard">📋</button>
+                </div>
+                <div>
+                    <textarea :value="coveredListText" readonly style="width:100%; height: 200px"></textarea>
+                </div>
             </div>
-            <div>
-                <textarea v-model="resultText" style="width:100%; height: 500px" readonly></textarea>
+            <div style="margin-bottom: 20px">
+                <div>
+                    <h3 style="display: inline-block">Items You Still Need</h3>
+                    <button v-if="neededList.length > 0" @click="copyToClipboard(neededListText)" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 5px" title="Copy to clipboard">📋</button>
+                </div>
+                <div>
+                    <textarea :value="neededListText" readonly style="width:100%; height: 200px"></textarea>
+                </div>
             </div>
-            <div>
-                <p v-if="coveredList.length > 0" style="font-weight:bold">What Your Assets Covered</p>
-                <div v-for="type in coveredList" class="market-item">
-                    [[ type.multiplier ]] - [[ type.name ]]
+            <div v-if="formattedSubstitutionNotes.length > 0">
+                <div>
+                    <h3>Substitutions</h3>
+                </div>
+                <div>
+                    <div v-for="note in formattedSubstitutionNotes" class="market-item" v-html="note"></div>
                 </div>
             </div>
         </div>
