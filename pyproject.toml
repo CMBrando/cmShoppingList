@@ -52,7 +52,7 @@ sections = [
     "LOCALFOLDER"
 ]
 known_allianceauth = ["allianceauth", "app_utils"]
-known_django = ["django", "django_webtest", "esi", "eveuniverse"]
+known_django = ["django", "django_webtest"]
 
 [tool.pylint.'MASTER']
 ignore-patterns = ["__init__.py", "auth_hooks.py", "apps.py", "admin.py"]

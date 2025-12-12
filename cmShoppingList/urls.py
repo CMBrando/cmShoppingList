@@ -4,7 +4,7 @@ from django.urls import path
 
 from . import views
 
-app_name = "example"
+app_name = "cmShoppingList"
 
 urlpatterns = [
     path("", views.index, name="index"),
