@@ -182,6 +182,7 @@ export default {
         },
         copyToClipboard: function (text) {
             navigator.clipboard.writeText(text);
+            toastr.success('Copied to clipboard')
         },
     },
     computed: {

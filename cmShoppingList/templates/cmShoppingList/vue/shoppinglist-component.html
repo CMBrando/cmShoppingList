@@ -31,7 +31,7 @@
             <div style="margin-bottom: 20px">
                 <div>
                     <h3 style="display: inline-block">Items You Have</h3>
-                    <button v-if="coveredList.length > 0" @click="copyToClipboard(coveredListText)" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 5px" title="Copy to clipboard">📋</button>
+                    <i v-if="coveredList.length > 0" @click="copyToClipboard(coveredListText)" class="fa fa-clipboard" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 15px" title="Copy to clipboard"></i>
                 </div>
                 <div>
                     <textarea :value="coveredListText" readonly style="width:100%; height: 200px"></textarea>
@@ -40,7 +40,7 @@
             <div style="margin-bottom: 20px">
                 <div>
                     <h3 style="display: inline-block">Items You Still Need</h3>
-                    <button v-if="neededList.length > 0" @click="copyToClipboard(neededListText)" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 5px" title="Copy to clipboard">📋</button>
+                    <i v-if="neededList.length > 0" @click="copyToClipboard(neededListText)" class="fa fa-clipboard" style="float: right; border: none; background: none; cursor: pointer; font-size: 18px; margin-top: 15px" title="Copy to clipboard"></i>
                 </div>
                 <div>
                     <textarea :value="neededListText" readonly style="width:100%; height: 200px"></textarea>

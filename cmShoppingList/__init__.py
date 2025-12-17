@@ -2,4 +2,4 @@
 
 # pylint: disable = invalid-name
 default_app_config = "cmShoppingList.apps.DefaultConfig"
-__version__ = "0.11"
+__version__ = "0.20"

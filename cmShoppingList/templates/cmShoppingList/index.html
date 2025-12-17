@@ -23,12 +23,14 @@
 
 {% block extra_css %}
 
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="/static/cmShoppingList/css/main.css?v={{ CM_VERSION }}">
 
 {% endblock %}
 
 {% block extra_javascript %}
 
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script type="text/javascript" src="/static/cmShoppingList/scripts/parse.js?v={{ CM_VERSION }}"></script>
 
@@ -63,4 +65,16 @@
 
 
 {% block extra_script %}
+
+    toastr.options = {
+        "positionClass": "toast-bottom-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "4000",
+        "extendedTimeOut": "1000"
+        }
+
+
 {% endblock %}

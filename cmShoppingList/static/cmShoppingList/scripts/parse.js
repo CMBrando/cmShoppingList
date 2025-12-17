@@ -35,10 +35,19 @@ function parseFitText(text, marketLookup, includeHull) {
                 var type = name.substring(0, name.indexOf(',')).replace('[', '');
 
                 if (marketLookup instanceof Array) {
-                    var item = _.find(marketLookup, function (obj) { return (obj.text == type || obj.name == type); });
+                    var hullItem = _.find(marketLookup, function (obj) { return (obj.text == type || obj.name == type); });
 
-                    if(item != null)
-                        fitItems.push({ name: item.name, id: item.id, multiplier: 1 });
+                    if(hullItem != null) {
+
+                       var fItem = _.find(fitItems, function (item) { return item.id == hullItem.id; });
+
+                        // if exists increment
+                        if (fItem != null)
+                            fItem.multiplier = fItem.multiplier + 1;
+                        else
+                            fitItems.push({ name: hullItem.name, id: hullItem.id, multiplier: 1 });
+                              
+                    }
                 }
             }
 
