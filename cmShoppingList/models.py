@@ -14,29 +14,14 @@ class General(models.Model):
         ]
         verbose_name = ("cmShoppingList")
 
-class MarketType(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        default_permissions = ()
-
-
 class ItemEquivalence(models.Model):
-    """Maps original items to their equivalent items."""
-    original_item = models.ForeignKey(
-        MarketType,
-        on_delete=models.CASCADE,
-        related_name='equivalent_items'
-    )
-    equivalent_item = models.ForeignKey(
-        MarketType,
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
+    """Maps EVE SDE item type IDs to interchangeable item type IDs."""
+
+    original_item_id = models.BigIntegerField(db_column="original_item_id")
+    equivalent_item_id = models.BigIntegerField(db_column="equivalent_item_id")
 
     class Meta:
         default_permissions = ()
-        unique_together = ('original_item', 'equivalent_item')
+        unique_together = ("original_item_id", "equivalent_item_id")
 
 

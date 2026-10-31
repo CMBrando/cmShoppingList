@@ -19,7 +19,12 @@ pip install -e {path_to}/cmShoppingList
 
 ```
 
-First add your app to the Django project by adding 'cmShoppingList' to INSTALLED_APPS in `settings/local.py`.
+Add `eve_sde` and `cmShoppingList` to `INSTALLED_APPS` in `settings/local.py`. The `django-eveonline-sde` package is installed as a dependency.
+For a new SDE installation, also include `modeltranslation` in `INSTALLED_APPS` as described in the SDE setup instructions.
+
+```python
+INSTALLED_APPS += ["eve_sde", "cmShoppingList"]
+```
 
 Next perform migrations to add models to the database:
 
@@ -27,11 +32,14 @@ Next perform migrations to add models to the database:
 python manage.py migrate
 ```
 
-Next initalize all the market types and equivalences
+Load the EVE SDE item types and dogma data, then build item equivalences:
 
 ```bash
-python manage.py populate_types
+python manage.py esde_load_sde
+python manage.py populate_equivalences
 ```
+
+Run `populate_equivalences` again after each SDE update. Existing equivalence mappings are retained during upgrade until you run this command. The old `populate_types` command and local `MarketType` table have been removed.
 
 Next copy all the static data to the output folder
 

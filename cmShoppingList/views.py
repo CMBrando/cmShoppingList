@@ -1,13 +1,15 @@
 """Views."""
 
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
+from eve_sde.models import ItemType
 
 from cmShoppingList import app_settings
+from cmShoppingList.models import ItemEquivalence
 
-from .models import MarketType, ItemEquivalence
-from collections import defaultdict
 
 @login_required
 @permission_required("cmShoppingList.basic_access")
@@ -22,7 +24,12 @@ def index(request):
 @login_required
 @permission_required("cmShoppingList.basic_access")
 def get_market_types(request):
-    items = list(MarketType.objects.all().values())
+    items = [
+        {"id": item_id, "name": name}
+        for item_id, name in ItemType.objects.filter(
+            published=True, market_group__isnull=False
+        ).values_list("id", "name_en")
+    ]
     return JsonResponse(items, safe=False)
 
 @login_required

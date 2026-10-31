@@ -105,7 +105,7 @@ function parseFitText(text, marketLookup, includeHull) {
             // match pre-number
             var num = 1; // default multiplier
 
-            var res = name.match(/^\d*[,]?\d+x /);
+            var res = name.match(/^(?:\d{1,3}(?:,\d{3})+|\d+)x /);
 
             // if no number don't find and add
             if (res != null && res.length == 1) {
@@ -116,12 +116,12 @@ function parseFitText(text, marketLookup, includeHull) {
 
             // if not found check for multipler at the end
             if (res == null || res.length == 0) {
-                res = name.match(/ \d*[,]?\d+$/);
+                res = name.match(/ (?:\d{1,3}(?:,\d{3})+|\d+)$/);
 
                 if (res != null && res.length == 1) {
                     name = name.replace(res[0], '');
                     name = _.clean(name);
-                    num = parseInt(res[0].replace(' ', '')); // this is to get the multiplier
+                    num = parseInt(res[0].replace(/,/g, '').trim()); // this is to get the multiplier
                 }
             }
 
