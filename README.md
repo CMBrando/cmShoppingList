@@ -19,7 +19,7 @@ pip install -e {path_to}/cmShoppingList
 
 ```
 
-Add `eve_sde` and `cmShoppingList` to `INSTALLED_APPS` in `settings/local.py`. The `django-eveonline-sde` package is installed as a dependency.
+Add `eve_sde` and `cmShoppingList` to `INSTALLED_APPS` in `settings/local.py`. Version 1 of `django-eveonline-sde` is installed as a dependency.
 For a new SDE installation, also include `modeltranslation` in `INSTALLED_APPS` as described in the SDE setup instructions.
 
 ```python
